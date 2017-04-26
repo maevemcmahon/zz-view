@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script src="fabric.js"></script>
+<script src="fabric.min.js" ></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-<script src="bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -75,10 +74,6 @@
     };
     
     var f = fabric.Image.filters;
-    
-
-    
-    
 
     function getSelectedCanvases() {
       var checkedcans = [];
@@ -98,6 +93,7 @@
       for (var i = 0; i < canvases.length; i++) {
         var can = canvases[i];
         var obj = can.getActiveObject();
+obj.crossOrigin = "Anonymous";
         obj.filters[index] = filter;
         console.log(obj);
         console.log(filter);
@@ -119,12 +115,9 @@
 
 
     var c1 = new fabric.Canvas('c1');
-
-
     var c2 = new fabric.Canvas('c2');
 
-
-    var url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Taeniopygia_guttata_-_front_view_-_dundee_wildlife_park.jpg/170px-Taeniopygia_guttata_-_front_view_-_dundee_wildlife_park.jpg';
+    var url = 'nrg1575-f3.jpg';
 
     fabric.Image.fromURL(url, function(img) {
       c1.add(img).renderAll();
@@ -139,15 +132,19 @@
 
     function zoomIn() {
       var c = getSelectedCanvases();
-      for (i = 0; i < c.length; i++) {
-        c[i].setZoom(c[i].getZoom() * 1.1);
+
+      for (var i = 0; i < c.length; i++) {
+        canvas = c[i];
+        canvas.setZoom(canvas.getZoom() * 1.1);
       }
     }
 
     function zoomOut() {
       var c = getSelectedCanvases();
-      for (i = 0; i < c.length; i++) {
-        c[i].setZoom(c[i].getZoom() / 1.1);
+
+      for (var i = 0; i < c.length; i++) {
+        canvas = c[i];
+        canvas.setZoom(canvas.getZoom() / 1.1);
       }
     }
 
