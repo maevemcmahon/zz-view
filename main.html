@@ -67,140 +67,127 @@
     </table>
   </div>
   
-  
-  <script id = "main">
-      (function() {
+<script>
+(function() {
 
-      var $ = function(id) {
-        return document.getElementById(id)
-      };
+    var $ = function(id) {
+      return document.getElementById(id)
+    };
+    
+    var f = fabric.Image.filters;
+    
 
-      function getSelectedCanvases() {
-        var checkedcans = [];
-        var allcans = document.getElementsByClassName('canvascheck');
-        for (var i = 0; i < allcans.length; i++) {
-          if (allcans[i].checked) {
-            canvas = eval(allcans[i].id.substring(0, 2));
-            checkedcans.push(canvas);
-          }
-        }
-        return checkedcans;
-      }
+    
+    
 
-
-      function applyFilter(canvases, index, filter) {
-        for (i = 0; i < canvases.length; i++) {
-          var obj = canvases[i].getActiveObject();
-          obj.filters[index] = filter;
-          console.log(obj.filters[index]);
-          obj.applyFilters(canvases[i]);
-          canvases[i].renderAll;
+    function getSelectedCanvases() {
+      var checkedcans = [];
+      var allcans = document.getElementsByClassName('canvascheck');
+      for (var i = 0; i < allcans.length; i++) {
+        if (allcans[i].checked) {
+          canvas = eval(allcans[i].id.substring(0, 2));
+          checkedcans.push(canvas);
         }
       }
+      return checkedcans;
+    }
 
 
-      function applyFilterValue(canvases, index, prop, value) {
-        for (i = 0; i < canvases.length; i++) {
-          var obj = canvases[i].getActiveObject();
-          if (obj.filters[index]) {
-            obj.filters[index][prop] = value;
-            obj.applyFilters(canvases[i].renderAll.bind(canvases[i]));
-          }
+    function applyFilter(index, filter) {
+      canvases = getSelectedCanvases();
+      for (var i = 0; i < canvases.length; i++) {
+        var can = canvases[i];
+        var obj = can.getActiveObject();
+        obj.filters[index] = filter;
+        console.log(obj);
+        console.log(filter);
+        obj.applyFilters(can.renderAll.bind(can));
+      }
+    }
+
+    function applyFilterValue(index, prop, value) {
+      canvases = getSelectedCanvases();
+      for (var i = 0; i < canvases.length; i++) {
+    	var can = canvases[i]
+        var obj = can.getActiveObject();
+        if (obj.filters[index]) {
+          obj.filters[index][prop] = value;
+          obj.applyFilters(can.renderAll.bind(can));
         }
       }
+    }
 
 
-      var c1 = new fabric.Canvas('c1'),
-        f = fabric.Image.filters;
+    var c1 = new fabric.Canvas('c1');
 
-      var c2 = new fabric.Canvas('c2'),
-        f = fabric.Image.filters;
 
-      c1.on({
-        'object:selected': function() {
-          fabric.util.toArray(document.getElementsByClassName('filter'))
-            .forEach(function(el) {
-              el.disabled = false;
-            })
+    var c2 = new fabric.Canvas('c2');
 
-          var filters = ['grayscale', 'brightness', 'contrast', 'saturate'];
 
-          for (var i = 0; i < filters.length; i++) {
-            $(filters[i]).checked = !!images.filters[i];
-          }
-        },
-        'selection:cleared': function() {
-          fabric.util.toArray(document.getElementsByClassName('filter'))
-            .forEach(function(el) {
-              el.disabled = true;
-            })
-        }
-      });
+    var url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Taeniopygia_guttata_-_front_view_-_dundee_wildlife_park.jpg/170px-Taeniopygia_guttata_-_front_view_-_dundee_wildlife_park.jpg';
 
-      var url = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Taeniopygia_guttata_-_front_view_-_dundee_wildlife_park.jpg/170px-Taeniopygia_guttata_-_front_view_-_dundee_wildlife_park.jpg';
+    fabric.Image.fromURL(url, function(img) {
+      c1.add(img).renderAll();
+      c1.setActiveObject(img);
+    });
 
-      fabric.Image.fromURL(url, function(img) {
-        c1.add(img).renderAll();
-        c1.setActiveObject(img);
-      });
+    fabric.Image.fromURL(url, function(img) {
+      c2.add(img).renderAll();
+      c2.setActiveObject(img);
+    });
 
-      fabric.Image.fromURL(url, function(img) {
-        c2.add(img).renderAll();
-        c2.setActiveObject(img);
-      });
 
-      function zoomIn() {
-        var c = getSelectedCanvases();
-        for (i = 0; i < c.length; i++) {
-          c[i].setZoom(c[i].getZoom() * 1.1);
-        }
+    function zoomIn() {
+      var c = getSelectedCanvases();
+      for (i = 0; i < c.length; i++) {
+        c[i].setZoom(c[i].getZoom() * 1.1);
       }
+    }
 
-      function zoomOut() {
-        var c = getSelectedCanvases();
-        for (i = 0; i < c.length; i++) {
-          c[i].setZoom(c[i].getZoom() / 1.1);
-        }
+    function zoomOut() {
+      var c = getSelectedCanvases();
+      for (i = 0; i < c.length; i++) {
+        c[i].setZoom(c[i].getZoom() / 1.1);
       }
+    }
 
-      var indexF;
-      $('zoomIn').onclick = function() {
-        zoomIn();
-      };
-      $('zoomOut').onclick = function() {
-        zoomOut();
-      };
-      $('grayscale').onclick = function() {
-        applyFilter(getSelectedCanvases(), 0, this.checked && new f.Grayscale());
-      };
-      $('brightness').onclick = function() {
-        applyFilter(getSelectedCanvases(), 1, this.checked && new f.Brightness({
-          brightness: parseInt($('brightness-value').value, 10)
-        }));
-      };
-      $('brightness-value').onchange = function() {
-        applyFilterValue(getSelectedCanvases(), 1, 'brightness', parseInt(this.value, 10));
-      };
-      $('contrast').onclick = function() {
-        applyFilter(2, this.checked && new f.Contrast({
-          contrast: parseInt($('contrast-value').value, 10)
-        }));
-      };
-      $('contrast-value').onchange = function() {
-        applyFilterValue(2, 'contrast', parseInt(this.value, 10));
-      };
-      $('saturate').onclick = function() {
-        applyFilter(3, this.checked && new f.Saturate({
-          saturate: parseInt($('saturate-value').value, 10)
-        }));
-      };
-      $('saturate-value').onchange = function() {
-        applyFilterValue(3, 'saturate', parseInt(this.value, 10));
-      };
+    var indexF;
+    $('zoomIn').onclick = function() {
+      zoomIn();
+    };
+    $('zoomOut').onclick = function() {
+      zoomOut();
+    };
+    $('grayscale').onclick = function() {
+      applyFilter(0, this.checked && new f.Grayscale());
+    };
+    $('brightness').onclick = function() {
+      applyFilter(1, this.checked && new f.Brightness({
+        brightness: parseInt($('brightness-value').value, 10)
+      }));
+    };
+    $('brightness-value').onchange = function() {
+      applyFilterValue(1, 'brightness', parseInt(this.value, 10));
+    };
+    $('contrast').onclick = function() {
+      applyFilter(2, this.checked && new f.Contrast({
+        contrast: parseInt($('contrast-value').value, 10)
+      }));
+    };
+    $('contrast-value').onchange = function() {
+      applyFilterValue(2, 'contrast', parseInt(this.value, 10));
+    };
+    $('saturate').onclick = function() {
+      applyFilter(3, this.checked && new f.Saturate({
+        saturate: parseInt($('saturate-value').value, 10)
+      }));
+    };
+    $('saturate-value').onchange = function() {
+      applyFilterValue(3, 'saturate', parseInt(this.value, 10));
+    };
 
-    })();
+  })();
 
-  
-  </script>	
+</script>
 </body>
 </html>
